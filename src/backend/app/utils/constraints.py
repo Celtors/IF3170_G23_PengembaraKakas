@@ -12,7 +12,7 @@ class Violations(NamedTuple):
     def total(self) -> int:
         return sum(self)
 
-def count_violations(state: State) -> Violations:
+def cnt_violations(state: State) -> Violations:
     stuck = 0
     inside = []
     for package, rep in zip(state.packages, state.shape_pack_models):
@@ -51,4 +51,4 @@ def count_violations(state: State) -> Violations:
     )
 
 def is_valid(state: State) -> bool:
-    return count_violations(state).total == 0
+    return cnt_violations(state).total == 0
