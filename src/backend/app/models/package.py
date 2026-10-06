@@ -20,3 +20,5 @@ class Package:
     def get_dimension(self):
         return self.dimension
 
+    def get_id(self): return self.id
+
