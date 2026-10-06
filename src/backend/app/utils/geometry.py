@@ -7,6 +7,11 @@ from app.models.truck import Truck
 class Box(NamedTuple):
     lo: tuple[int, int, int]
     hi: tuple[int, int, int]
+    
+    @property
+    def bottom(self) -> int: return self.lo[2]
+    @property
+    def top(self) -> int: return self.hi[2]
 
 
 class Placement(Enum):
@@ -24,14 +29,16 @@ def container_box(truck: Truck) -> Box:
     return Box((0, 0, 0), truck.dimension.get_wlh())
 
 
+def overlap_len(a: Box, b: Box, axis: int) -> int:
+    return max(0, min(a.hi[axis], b.hi[axis]) - max(a.lo[axis], b.lo[axis]))
+
+
 def overlap_volume(a: Box, b: Box) -> int:
-    volume = 1
-    for axis in range(3):
-        length = min(a.hi[axis], b.hi[axis]) - max(a.lo[axis], b.lo[axis])
-        if length <= 0:
-            return 0
-        volume *= length
-    return volume
+    return overlap_len(a, b, 0) * overlap_len(a, b, 1) * overlap_len(a, b, 2)
+
+
+def footprint_overlap(a: Box, b: Box) -> int:
+    return overlap_len(a, b, 0) * overlap_len(a, b, 1)
 
 
 def box_volume(box: Box) -> int:
