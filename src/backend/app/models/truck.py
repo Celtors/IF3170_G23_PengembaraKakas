@@ -1,4 +1,4 @@
-from dimensions import Dimensions
+from app.models.dimensions import Dimensions
 
 class Truck:
     def __init__(self, dim: Dimensions, max_cap: int):

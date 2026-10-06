@@ -1,4 +1,4 @@
-from backend.app.models.dimensions import Dimensions
+from app.models.dimensions import Dimensions
 
 class Package:
     def __init__(

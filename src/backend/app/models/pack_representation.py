@@ -1,5 +1,5 @@
-from position import Position
-from orientation import Orientation
+from app.models.position import Position
+from app.models.orientation import Orientation
 
 class PackRepresentation:
     def __init__(

@@ -1,8 +1,8 @@
-from package import Package
-from truck import Truck
-from pack_representation import PackRepresentation
-from position import Position
-from orientation import Orientation
+from app.models.position import Position
+from app.models.orientation import Orientation
+from app.models.package import Package
+from app.models.truck import Truck
+from app.models.pack_representation import PackRepresentation
 
 class State:
     def __init__(self, truck: Truck):
