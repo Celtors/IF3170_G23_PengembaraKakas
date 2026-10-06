@@ -9,4 +9,4 @@ class Position:
         self.y = y
         self.z = z
 
-    def get_xyz(self): return tuple(self.x, self.y, self.z)
+    def get_xyz(self): return (self.x, self.y, self.z)
