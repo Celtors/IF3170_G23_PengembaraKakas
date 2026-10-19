@@ -1,22 +1,43 @@
+import time
+from typing import Callable
+
 from app.models.state import State
 from app.utils.objective import score
 from app.utils.neighbors import all_neighbors, copy_state
 from app.algorithms.search_algorithms import SearchAlgorithms
-from typing import Callable
 
 class HillClimbingSA(SearchAlgorithms):
-    def run(self, init_state: State, obj_fn: Callable[[State], int] = score) -> State:
-        curr_val = obj_fn(init_state)
-        neigh = copy_state(init_state)
-        while (True):
-            if (obj_fn(self.gen_neighbor(neigh, obj_fn)) <= curr_val):
-                return neigh
-            neigh = self.gen_neighbor(neigh)
+    def __init__(self):
+        self.history: list[int] = []
+        self.iterations = 0
+        self.duration = 0.0
 
-    def gen_neighbor(self, init_state: State, obj_fn: Callable[[State], int] = score) -> State:
-        neighbor: State
-        for succ in all_neighbors(init_state):
-            if (obj_fn(succ) > curr_val):
-                curr_val = obj_fn(succ)
-                neighbor = succ
-        return neighbor
+    def run(self, init_state: State, obj_fn: Callable[[State], int] = score) -> State:
+        start = time.perf_counter()
+        curr = copy_state(init_state)
+        curr_val = obj_fn(curr)
+        
+        self.history = [curr_val]
+        
+        while True:
+            best_neighbor = None
+            # Inisialisasi dengan nilai minimum
+            best_neighbor_val = float('-inf') 
+            
+            # Evaluasi seluruh kemungkinan neighbor
+            for succ in all_neighbors(curr):
+                succ_val = obj_fn(succ)
+                if succ_val > best_neighbor_val:
+                    best_neighbor = succ
+                    best_neighbor_val = succ_val
+                    
+            if best_neighbor is None or best_neighbor_val <= curr_val:
+                break
+                
+            curr = best_neighbor
+            curr_val = best_neighbor_val
+            self.history.append(curr_val)
+            
+        self.iterations = len(self.history) - 1
+        self.duration = time.perf_counter() - start
+        return curr
