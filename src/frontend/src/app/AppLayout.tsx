@@ -7,12 +7,19 @@ import { ExperimentConfig } from "../features/algorithm-config/components/Experi
 import { useTruckConfig } from "../features/truck-config/hooks/useTruckConfig";
 import { TruckForm } from "../features/truck-config/components/TruckForm";
 import { PackageListEditor } from "../features/truck-config/components/PackageListEditor";
+import { VisualizationCanvas } from "../features/visualization/components/VisualizationCanvas";
+import { usePackageSelection } from "../features/visualization/hooks/usePackageSelection";
+import { MOCK_RUN } from "../data/visualizationData";
 
 const AppLayout: React.FC = () => {
     const [collapseLeft, setCollapseLeft] = useState<boolean>(false);
     const [collapseBottom, setCollapseBottom] = useState<boolean>(false);
     const cfg = useAlgorithmConfig();
     const truckCfg = useTruckConfig();
+    const { selectedPackageId, selectPackage } = usePackageSelection();
+    //masih buat testing
+    const [stateIndex, setStateIndex] = useState<number>(0);
+    const selectedState = MOCK_RUN.states[stateIndex] ?? null;
 
     const containerClass = [
         "grid-container",
@@ -79,7 +86,28 @@ const AppLayout: React.FC = () => {
             </aside>
 
             <main className="top-right">
-                <p>Top Right Content</p>
+                <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                    <VisualizationCanvas
+                        truck={MOCK_RUN.truck}
+                        packages={MOCK_RUN.packages}
+                        state={selectedState}
+                        selectedPackageId={selectedPackageId}
+                        onSelectPackage={selectPackage}
+                    />
+                    {/* masih placeholder */}
+                    <select
+                        aria-label="Mock state (temporary)"
+                        style={{ position: "absolute", top: 8, right: 8 }}
+                        value={stateIndex}
+                        onChange={(e) => setStateIndex(Number(e.target.value))}
+                    >
+                        {MOCK_RUN.states.map((st, i) => (
+                            <option key={st.index} value={i}>
+                                State {st.index} | iter {st.iteration} | objective {st.objectiveValue}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </main>
 
             <section className="bottom">
