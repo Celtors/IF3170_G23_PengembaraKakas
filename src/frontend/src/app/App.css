@@ -1,0 +1,43 @@
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    "left top-right"
+    "left bottom";
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 2fr 1fr;
+  gap: 10px;
+  height: 100vh;
+  transition: all 0.3s ease;
+}
+
+.left {
+  grid-area: left;
+  background-color: #f4f4f4;
+}
+.top-right {
+  grid-area: top-right;
+  background-color: #d0e6ff;
+}
+.bottom {
+  grid-area: bottom;
+  background-color: #ffe6b3;
+}
+
+.grid-container.no-left {
+  grid-template-areas:
+    "top-right"
+    "bottom";
+  grid-template-columns: 1fr;
+}
+
+.grid-container.no-bottom {
+  grid-template-areas:
+    "left top-right";
+  grid-template-rows: 1fr;
+}
+
+.grid-container.no-left.no-bottom {
+  grid-template-areas: "top-right";
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
