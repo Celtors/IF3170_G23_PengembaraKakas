@@ -2,10 +2,13 @@ import type { ReactNode } from "react";
 import type { ValidationIssue } from "../types";
 import "./FormField.css";
 
+/** Hanya severity + message yang dipakai, sehingga issue dari feature lain juga bisa diteruskan. */
+export type FieldIssue = Pick<ValidationIssue, "severity" | "message">;
+
 interface FormFieldProps {
     label: string;
     hint?: string;
-    issue?: ValidationIssue;
+    issue?: FieldIssue;
     /** true: bungkus beberapa input dalam <fieldset> (mis. 3 variasi GA) */
     group?: boolean;
     children: ReactNode;

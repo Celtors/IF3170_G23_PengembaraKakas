@@ -4,7 +4,7 @@ html, body {
 }
 
 .grid-container {
-  --left-width: 250px;
+  --left-width: 300px;
   --bottom-height: 35vh;
   --rail-size: 40px;
 

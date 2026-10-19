@@ -4,11 +4,15 @@ import { useAlgorithmConfig } from "../features/algorithm-config/hooks/useAlgori
 import { AlgorithmSelector } from "../features/algorithm-config/components/AlgorithmSelector";
 import { AlgorithmParameters } from "../features/algorithm-config/components/AlgorithmParameters";
 import { ExperimentConfig } from "../features/algorithm-config/components/ExperimentConfig";
+import { useTruckConfig } from "../features/truck-config/hooks/useTruckConfig";
+import { TruckForm } from "../features/truck-config/components/TruckForm";
+import { PackageListEditor } from "../features/truck-config/components/PackageListEditor";
 
 const AppLayout: React.FC = () => {
     const [collapseLeft, setCollapseLeft] = useState<boolean>(false);
     const [collapseBottom, setCollapseBottom] = useState<boolean>(false);
     const cfg = useAlgorithmConfig();
+    const truckCfg = useTruckConfig();
 
     const containerClass = [
         "grid-container",
@@ -55,7 +59,21 @@ const AppLayout: React.FC = () => {
                             issues={cfg.validationIssues}
                             onUpdate={cfg.updateExperimentConfig}
                         />
-                        <button type="button" disabled={!cfg.isValid}>Run</button>
+                        <TruckForm
+                            truck={truckCfg.truck}
+                            issues={truckCfg.validationIssues}
+                            onUpdateDimension={truckCfg.updateTruckDimension}
+                            onUpdateMaxCapacity={truckCfg.updateMaxCapacity}
+                        />
+                        <PackageListEditor
+                            packages={truckCfg.packages}
+                            issues={truckCfg.validationIssues}
+                            onAdd={truckCfg.addPackage}
+                            onRemove={truckCfg.removePackage}
+                            onUpdate={truckCfg.updatePackage}
+                            onUpdateDimension={truckCfg.updatePackageDimension}
+                        />
+                        <button type="button" disabled={!cfg.isValid || !truckCfg.isValid}>Run</button>
                     </div>
                 )}
             </aside>

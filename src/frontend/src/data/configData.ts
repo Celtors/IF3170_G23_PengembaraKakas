@@ -7,6 +7,13 @@ import type {
     ParamKey,
     PresetName,
 } from "../features/algorithm-config/types";
+import type {
+    DimensionAxis,
+    NumberFieldDef,
+    PackageNumberField,
+} from "../features/truck-config/types";
+import type { PackageSpec } from "../types/package";
+import type { TruckSpec } from "../types/truck";
 
 // Sama dengan preset MODERATE_SEARCH.
 export const DEFAULT_PARAMS: AlgorithmParamType = {
@@ -127,3 +134,61 @@ export const ALGORITHM_ORDER: AlgorithmType[] = [
     "SIM_ANNEALING",
     "GENETIC_ALG",
 ];
+
+// ---------------------------------------------------------------------------
+// Truck & package config (features/truck-config)
+// ---------------------------------------------------------------------------
+
+export const DEFAULT_TRUCK: TruckSpec = {
+    dimensions: { w: 10, l: 20, h: 5 },
+    maxCapacity: 500,
+};
+
+// Total volume (1445) > volume peti kemas (1000) dan total berat (775) > kapasitas (500),
+// sehingga tidak semua paket muat dan pencarian punya trade-off yang nyata.
+export const DEFAULT_PACKAGES: PackageSpec[] = [
+    { id: "PKG-1",  dimensions: { w: 4, l: 6,  h: 3 }, value: 120, weight: 40,  isFragile: false, eta: 2 },
+    { id: "PKG-2",  dimensions: { w: 5, l: 8,  h: 4 }, value: 220, weight: 90,  isFragile: false, eta: 3 },
+    { id: "PKG-3",  dimensions: { w: 3, l: 4,  h: 1 }, value: 60,  weight: 5,   isFragile: false, eta: 3 },
+    { id: "PKG-4",  dimensions: { w: 6, l: 10, h: 3 }, value: 260, weight: 110, isFragile: true,  eta: 1 },
+    { id: "PKG-5",  dimensions: { w: 4, l: 4,  h: 4 }, value: 90,  weight: 30,  isFragile: false, eta: 5 },
+    { id: "PKG-6",  dimensions: { w: 2, l: 5,  h: 2 }, value: 45,  weight: 12,  isFragile: true,  eta: 4 },
+    { id: "PKG-7",  dimensions: { w: 8, l: 12, h: 5 }, value: 520, weight: 200, isFragile: false, eta: 2 },
+    { id: "PKG-8",  dimensions: { w: 5, l: 5,  h: 2 }, value: 70,  weight: 25,  isFragile: false, eta: 6 },
+    { id: "PKG-9",  dimensions: { w: 7, l: 9,  h: 4 }, value: 310, weight: 140, isFragile: false, eta: 3 },
+    { id: "PKG-10", dimensions: { w: 3, l: 6,  h: 3 }, value: 80,  weight: 20,  isFragile: true,  eta: 2 },
+    { id: "PKG-11", dimensions: { w: 6, l: 6,  h: 5 }, value: 200, weight: 85,  isFragile: false, eta: 4 },
+    { id: "PKG-12", dimensions: { w: 4, l: 7,  h: 2 }, value: 75,  weight: 18,  isFragile: false, eta: 7 },
+];
+
+/** Template paket baru; `id` dibuat otomatis oleh useTruckConfig. */
+export const DEFAULT_NEW_PACKAGE: Omit<PackageSpec, "id"> = {
+    dimensions: { w: 2, l: 2, h: 2 },
+    value: 10,
+    weight: 5,
+    isFragile: false,
+    eta: 3,
+};
+
+export const DIMENSION_AXES: { axis: DimensionAxis; label: string; short: string }[] = [
+    { axis: "w", label: "Width", short: "W" },
+    { axis: "l", label: "Length", short: "L" },
+    { axis: "h", label: "Height", short: "H" },
+];
+
+// Koordinat bilangan bulat -> dimensi harus bilangan bulat >= 1.
+export const DIMENSION_FIELD: NumberFieldDef = { label: "Dimension", step: 1, integer: true, min: 1 };
+
+export const MAX_CAPACITY_FIELD: NumberFieldDef = {
+    label: "Max capacity",
+    step: 1,
+    integer: true,
+    min: 1,
+    hint: "Total package weight the truck may carry.",
+};
+
+export const PACKAGE_NUMBER_FIELDS: Record<PackageNumberField, NumberFieldDef> = {
+    value: { label: "Value", step: 1, integer: true, min: 0 },
+    weight: { label: "Weight", step: 1, integer: true, min: 1 },
+    eta: { label: "ETA (days)", step: 1, integer: true, min: 0 },
+};
