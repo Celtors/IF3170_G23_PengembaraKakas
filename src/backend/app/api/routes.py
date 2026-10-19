@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from app.api.schemas import ExperimentRequest, ExperimentResponse, RunRequest, RunResponse
-from app.services.experiment import run_experiment, run_once
+from app.services.experiment import run_experiment
+from app.services.normal_run import run_once
 
 router = APIRouter(prefix="/api")
 
