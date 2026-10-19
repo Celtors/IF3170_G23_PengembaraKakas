@@ -33,7 +33,7 @@ export interface ExperimentConfigState {
     iterationVariation: number[];
 }
 
-export type PresetName = "FAST_TEST" | "ACADEMIC_BENCHMARK" | "DEEP_SEARCH";
+export type PresetName = "FAST_SEARCH" | "MODERATE_SEARCH" | "DEEP_SEARCH";
 
 export interface ParamFieldDef {
     label: string;

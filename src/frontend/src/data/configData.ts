@@ -8,7 +8,7 @@ import type {
     PresetName,
 } from "../features/algorithm-config/types";
 
-// Sama dengan preset ACADEMIC_BENCHMARK.
+// Sama dengan preset MODERATE_SEARCH.
 export const DEFAULT_PARAMS: AlgorithmParamType = {
     maxSidewaysMove: 10,
     maxRestart: 5,
@@ -30,8 +30,8 @@ export const DEFAULT_EXPERIMENT_CONFIG: ExperimentConfigState = {
 };
 
 export const PRESETS: Record<PresetName, { label: string; params: Partial<AlgorithmParamType> }> = {
-    FAST_TEST: {
-        label: "Fast test",
+    FAST_SEARCH: {
+        label: "Fast search",
         params: {
             maxIterations: 30,
             iteration: 30,
@@ -42,8 +42,8 @@ export const PRESETS: Record<PresetName, { label: string; params: Partial<Algori
             sumPopulation: 10,
         },
     },
-    ACADEMIC_BENCHMARK: {
-        label: "Academic benchmark",
+    MODERATE_SEARCH: {
+        label: "Moderate Search",
         params: {
             maxIterations: 100,
             iteration: 100,
