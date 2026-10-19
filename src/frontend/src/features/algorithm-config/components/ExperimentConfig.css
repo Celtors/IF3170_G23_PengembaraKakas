@@ -1,0 +1,74 @@
+.experiment-config {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.experiment-config__title {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #cbd5e1;
+}
+
+.experiment-config__modes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.experiment-config__modes-legend {
+    padding: 0 0 0.375rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #cbd5e1;
+}
+
+.experiment-config__mode {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.experiment-config__mode:hover {
+    border-color: #475569;
+}
+
+.experiment-config__mode--active {
+    background: rgba(23, 37, 84, 0.5);
+    border-color: #3b82f6;
+}
+
+.experiment-config__mode input {
+    margin: 0.125rem 0 0;
+    accent-color: #3b82f6;
+}
+
+.experiment-config__mode-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.experiment-config__mode-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+.experiment-config__mode-detail {
+    font-size: 0.6875rem;
+    color: #94a3b8;
+}
