@@ -182,3 +182,33 @@
     border-right-color: var(--border);
   }
 }
+
+.grid-container {
+  display: grid;
+  grid-template-areas: 
+    "menu visual"
+    "menu result";
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: 2fr 1fr;
+  gap: 10px;
+  height: 100vh;
+}
+
+.menu-content {
+  display: flex;
+  flex-direction: column;
+  grid-area: menu;
+  background-color: blue;
+}
+
+.visual {
+  grid-area: visual;
+  background-color: beige;
+}
+
+.result-content {
+  display: flex;
+  flex-direction: column;
+  grid-area: result;
+  background-color: blueviolet;
+}
