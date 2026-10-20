@@ -1,0 +1,126 @@
+.state-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.state-view.empty {
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+}
+
+.state-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.state-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.state-tabs button {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.state-tabs button.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.state-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+}
+
+.state-stats div { display: flex; gap: 4px; }
+.state-stats dt { color: var(--text); }
+.state-stats dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.state-stats .bad dd { color: #dc2626; }
+
+.state-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.state-canvas {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.truck3d {
+  position: absolute;
+  inset: 0;
+}
+
+.state-hint {
+  position: absolute;
+  left: 8px;
+  bottom: 6px;
+  font-size: 12px;
+  color: var(--text);
+  pointer-events: none;
+}
+
+.state-table {
+  width: 360px;
+  overflow: auto;
+  border-left: 1px solid var(--border);
+}
+
+.state-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.state-table th,
+.state-table td {
+  padding: 3px 6px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.state-table th {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.state-table tr.hovered td { background: var(--accent-bg); }
+.state-table td.bad { color: #dc2626; font-weight: 600; }
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+@media (max-width: 900px) {
+  .state-body { flex-direction: column; }
+  .state-canvas { min-height: 240px; }
+  .state-table { width: auto; border-left: 0; border-top: 1px solid var(--border); }
+}

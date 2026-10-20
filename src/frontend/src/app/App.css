@@ -46,7 +46,7 @@ html, body {
 
 .top-right {
   grid-area: top-right;
-  background-color: #d0e6ff;
+  background-color: var(--code-bg);
 }
 
 .bottom {
