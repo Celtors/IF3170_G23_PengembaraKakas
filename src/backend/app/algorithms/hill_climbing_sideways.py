@@ -21,18 +21,14 @@ class HillClimbingSideways(SearchAlgorithms):
         curr = copy_state(init_state)
         self.history = [curr_val]
         self.sideways_moves = 0
-        consecutive = 0
         while (True):
             neigh, neigh_val = self.gen_neighbor(curr, obj_fn)
             if (neigh is None or neigh_val < curr_val):
                 break
             if (neigh_val == curr_val):
-                if (consecutive >= self.max_sideways):
+                if (self.sideways_moves >= self.max_sideways):
                     break
-                consecutive += 1
                 self.sideways_moves += 1
-            else:
-                consecutive = 0
             curr = neigh
             curr_val = neigh_val
             self.history.append(curr_val)
