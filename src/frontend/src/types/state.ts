@@ -1,4 +1,4 @@
-//masih placeholder, temporary type, soalnya belum sepakat sama BE
+//data dummy sebelum ada perubahan data
 export type Axis = "x" | "y" | "z";
 
 export interface Vec3 {
@@ -24,4 +24,12 @@ export interface SolutionState {
     iteration: number;
     objectiveValue: number;
     placements: PackagePlacement[];
+}
+
+//temporary sebelum ada data dari backend
+export interface RunSummary {
+    totalIterations: number;
+    initialObjective: number;
+    bestObjective: number;
+    finalObjective: number;
 }

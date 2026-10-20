@@ -6,15 +6,16 @@ html, body {
 .grid-container {
   --left-width: 300px;
   --bottom-height: 35vh;
-  --rail-size: 40px;
+  --rail-size: 4px;
 
   display: grid;
   grid-template-areas:
     "left top-right"
+    "left resize-rail"
     "left bottom";
   grid-template-columns: var(--left-width) minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) var(--bottom-height);
-  gap: 10px;
+  grid-template-rows: minmax(0, 1fr) var(--rail-size) var(--bottom-height);
+  gap: 2px;
   width: 100%;
   height: 100vh;
   transition:
@@ -96,4 +97,11 @@ html, body {
 .no-left .left .panel-header {
   justify-content: center;
   padding: 0;
+}
+
+.resize-rail {
+  grid-area: resize-rail;
+  height: var(--rail-size);
+  cursor: ns-resize;
+  user-select: none;
 }

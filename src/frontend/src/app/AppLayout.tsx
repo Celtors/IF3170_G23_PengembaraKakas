@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "./App.css";
 import { useAlgorithmConfig } from "../features/algorithm-config/hooks/useAlgorithmConfig";
 import { AlgorithmSelector } from "../features/algorithm-config/components/AlgorithmSelector";
@@ -9,6 +9,8 @@ import { TruckForm } from "../features/truck-config/components/TruckForm";
 import { PackageListEditor } from "../features/truck-config/components/PackageListEditor";
 import { VisualizationCanvas } from "../features/visualization/components/VisualizationCanvas";
 import { usePackageSelection } from "../features/visualization/hooks/usePackageSelection";
+import { useStateNavigation } from "../features/state-inspector/hooks/useStateNavigation";
+import { StateInspector } from "../features/state-inspector/components/StateInspector";
 import { MOCK_RUN } from "../data/visualizationData";
 
 const AppLayout: React.FC = () => {
@@ -17,9 +19,28 @@ const AppLayout: React.FC = () => {
     const cfg = useAlgorithmConfig();
     const truckCfg = useTruckConfig();
     const { selectedPackageId, selectPackage } = usePackageSelection();
-    //masih buat testing
-    const [stateIndex, setStateIndex] = useState<number>(0);
-    const selectedState = MOCK_RUN.states[stateIndex] ?? null;
+    // Mock run sebagai ganti dari hasil backend
+    const navigation = useStateNavigation(MOCK_RUN.states);
+    const selectedState = navigation.currentState;
+    const [bottomHeight, setBottomHeight] = useState(35); // dalam vh
+    const isDragging = useRef(false);
+
+    const handleMouseDown = () => (isDragging.current = true);
+    const handleMouseUp = () => (isDragging.current = false);
+    const handleMouseMove = (e: MouseEvent) => {
+        if (!isDragging.current) return;
+        const newHeight = ((window.innerHeight - e.clientY) / window.innerHeight) * 100;
+        setBottomHeight(Math.min(Math.max(newHeight, 10), 80)); // batas min/max
+    };
+
+    React.useEffect(() => {
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mouseup", handleMouseUp);
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, []);
 
     const containerClass = [
         "grid-container",
@@ -30,7 +51,9 @@ const AppLayout: React.FC = () => {
         .join(" ");
 
     return (
-        <div className={containerClass}>
+        <div className={containerClass}
+            style={{ "--bottom-height": `${bottomHeight}vh` } as React.CSSProperties}
+        >
             <aside className="left">
                 <div className="panel-header">
                     {!collapseLeft && <span className="panel-title">Configuration</span>}
@@ -86,30 +109,16 @@ const AppLayout: React.FC = () => {
             </aside>
 
             <main className="top-right">
-                <div style={{ position: "relative", width: "100%", height: "100%" }}>
-                    <VisualizationCanvas
-                        truck={MOCK_RUN.truck}
-                        packages={MOCK_RUN.packages}
-                        state={selectedState}
-                        selectedPackageId={selectedPackageId}
-                        onSelectPackage={selectPackage}
-                    />
-                    {/* masih placeholder */}
-                    <select
-                        aria-label="Mock state (temporary)"
-                        style={{ position: "absolute", top: 8, right: 8 }}
-                        value={stateIndex}
-                        onChange={(e) => setStateIndex(Number(e.target.value))}
-                    >
-                        {MOCK_RUN.states.map((st, i) => (
-                            <option key={st.index} value={i}>
-                                State {st.index} | iter {st.iteration} | objective {st.objectiveValue}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <VisualizationCanvas
+                    truck={MOCK_RUN.truck}
+                    packages={MOCK_RUN.packages}
+                    state={selectedState}
+                    selectedPackageId={selectedPackageId}
+                    onSelectPackage={selectPackage}
+                />
             </main>
 
+            <div className="resize-rail" onMouseDown={handleMouseDown}></div>
             <section className="bottom">
                 <div className="panel-header">
                     <span className="panel-title">Results</span>
@@ -126,7 +135,13 @@ const AppLayout: React.FC = () => {
 
                 {!collapseBottom && (
                     <div className="panel-body">
-                        <p>Bottom Section Content</p>
+                        <StateInspector
+                            navigation={navigation}
+                            summary={MOCK_RUN.summary}
+                            packages={MOCK_RUN.packages}
+                            selectedPackageId={selectedPackageId}
+                            onClearSelection={() => selectPackage(null)}
+                        />
                     </div>
                 )}
             </section>
