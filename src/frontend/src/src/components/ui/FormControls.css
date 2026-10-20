@@ -1,0 +1,27 @@
+.ui-input, .ui-select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.25rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border, #d1d5db);
+  border-radius: 0.45rem;
+  color: var(--text-h, #111827);
+  background: var(--bg, #fff);
+  font: inherit;
+  font-size: 0.875rem;
+}
+.ui-input:focus-visible, .ui-select:focus-visible, .ui-slider:focus-visible {
+  outline: 2px solid var(--accent, #7c3aed);
+  outline-offset: 2px;
+}
+
+.ui-input:disabled, .ui-select:disabled, .ui-slider:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ui-slider {
+  width: 100%;
+  accent-color: var(--accent, #7c3aed);
+  cursor: pointer;
+}

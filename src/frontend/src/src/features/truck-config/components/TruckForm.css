@@ -1,0 +1,14 @@
+.truck-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.truck-form__title {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #cbd5e1;
+}

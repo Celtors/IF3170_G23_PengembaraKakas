@@ -1,0 +1,60 @@
+.experiment-chart {
+    min-width: 0;
+    margin: 15px 0 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px 8px;
+    background: var(--bg);
+}
+
+.experiment-chart__heading { display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.experiment-chart__heading h3 { margin: 0;
+    color: var(--text-h);
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.experiment-chart__heading span { color: var(--text);
+    font-size: 11px;
+}
+
+.experiment-chart__svg { display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.experiment-chart__grid { stroke: var(--border);
+    stroke-dasharray: 3 4;
+    stroke-width: 1;
+}
+
+.experiment-chart__axis { stroke: var(--border);
+    stroke-width: 1.2;
+}
+
+.experiment-chart__line { fill: none;
+    stroke: #386641;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.experiment-chart__point { fill: #386641;
+    stroke: var(--bg);
+    stroke-width: 1.5;
+}
+
+.experiment-chart__tick { fill: var(--text);
+    font-size: 10px;
+}
+
+.experiment-chart__empty { color: var(--text);
+    font-size: 12px;
+}

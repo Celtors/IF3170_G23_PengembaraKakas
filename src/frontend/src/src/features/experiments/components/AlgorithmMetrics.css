@@ -1,0 +1,20 @@
+.algorithm-metrics__table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+.algorithm-metrics__table th, .algorithm-metrics__table td { padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: left; overflow-wrap: anywhere; }
+.algorithm-metrics__table th { color: var(--text); font-weight: 650; }
+.algorithm-metrics__table td:last-child { color: var(--text-h); }
+.algorithm-metrics__note, .algorithm-metrics__empty { color: var(--text); font-size: 11px; line-height: 1.45; }
+.algorithm-metric-summary { display: grid; gap: 4px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin: 8px 0; }
+.algorithm-metric-summary span, .algorithm-metric-summary small { font-size: 11px; color: var(--text); }
+.algorithm-metric-summary strong { font-size: 18px; color: var(--text-h); }
+.algorithm-metric-chart { min-width: 0; margin-top: 12px; border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+.algorithm-metric-chart__heading { display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
+.algorithm-metric-chart h4 { margin: 0; font-size: 13px; color: var(--text-h); }
+.algorithm-metric-chart__heading span, .algorithm-metric-chart__tick { font-size: 10px; fill: var(--text); color: var(--text); }
+.algorithm-metric-chart svg { display:block; width:100%; height:auto; }
+.algorithm-metric-chart__grid { stroke:var(--border); stroke-dasharray:3 4; }
+.algorithm-metric-chart__line { fill:none; stroke:#386641; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+.algorithm-metric-chart__line--max { stroke:#386641; }
+.algorithm-metric-chart__line--average { stroke:#6c8f72; stroke-dasharray:6 4; }
+.algorithm-metric-chart__legend { display:flex; flex-wrap:wrap; gap:12px; margin:8px 0; font-size:11px; color:var(--text); }
+.algorithm-metric-chart__legend span::before { content:""; display:inline-block; width:14px; border-top:3px solid #386641; margin-right:5px; vertical-align:middle; }
+.algorithm-metric-chart__legend .algorithm-metric-chart__line--average::before { border-top-color:#6c8f72; border-top-style:dashed; }

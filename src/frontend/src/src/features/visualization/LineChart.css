@@ -1,0 +1,79 @@
+:root {
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --series-1: #3987e5;
+    --series-2: #d95926;
+  }
+}
+
+.line-chart {
+  margin: 0;
+  min-width: 0;
+}
+.line-chart__title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+.line-chart__legend {
+  display: flex;
+  gap: 12px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  color: var(--text);
+}
+.line-chart__legend span,
+.line-chart__swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 4px;
+  border-radius: 2px;
+}
+.line-chart__plot {
+  position: relative;
+}
+.line-chart__plot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+}
+.line-chart__grid {
+  stroke: var(--border);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.line-chart__tick {
+  fill: var(--text);
+  font-size: 11px;
+}
+.line-chart__cross {
+  stroke: var(--text);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.line-chart__dot {
+  stroke: var(--bg);
+  stroke-width: 2;
+}
+.line-chart__tip {
+  position: absolute;
+  top: 4px;
+  pointer-events: none;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.line-chart__tip-head {
+  color: var(--text);
+}
