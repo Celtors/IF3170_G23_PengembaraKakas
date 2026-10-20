@@ -96,32 +96,32 @@ export const PARAM_FIELDS: Record<ParamKey, ParamFieldDef> = {
 export const ALGORITHM_METADATA: Record<AlgorithmType, AlgorithmMeta> = {
     STEEPEST_HC: {
         label: "Steepest-Ascent Hill Climbing",
-        description: "Always moves to the best neighbor; stops at a local optimum.",
+        description: "",
         paramKeys: [],
     },
     STOCHASTIC_HC: {
         label: "Stochastic Hill Climbing",
-        description: "Picks a random improving neighbor each iteration.",
+        description: "",
         paramKeys: ["maxIterations"],
     },
     SIDEMOVE_HC: {
         label: "Hill Climbing with Sideways Move",
-        description: "Allows moves to equal-valued neighbors, up to a limit.",
+        description: "",
         paramKeys: ["maxSidewaysMove"],
     },
     RANDOMR_HC: {
         label: "Random-Restart Hill Climbing",
-        description: "Repeats hill climbing from random initial states.",
+        description: "",
         paramKeys: ["maxRestart"],
     },
     SIM_ANNEALING: {
         label: "Simulated Annealing",
-        description: "Accepts worse moves with probability e^(ΔE/T) while T cools.",
+        description: "",
         paramKeys: ["initialTemp", "coolingRate", "minTemp"],
     },
     GENETIC_ALG: {
         label: "Genetic Algorithm",
-        description: "Evolves a population through selection, crossover and mutation.",
+        description: "",
         paramKeys: ["sumPopulation", "iteration", "mutationRate"],
     },
 };
@@ -184,7 +184,7 @@ export const MAX_CAPACITY_FIELD: NumberFieldDef = {
     step: 1,
     integer: true,
     min: 1,
-    hint: "Total package weight the truck may carry.",
+    hint: "",
 };
 
 export const PACKAGE_NUMBER_FIELDS: Record<PackageNumberField, NumberFieldDef> = {

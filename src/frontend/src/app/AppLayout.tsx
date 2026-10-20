@@ -146,7 +146,7 @@ const AppLayout: React.FC = () => {
                         />
                         <FormField
                             label="Seed (optional)"
-                            hint="Same seed = same initial state for every algorithm. Leave empty for random."
+                            hint=""
                             issue={seedValid ? undefined : { severity: "error", message: "Seed must be a whole number ≥ 0." }}
                         >
                             <input

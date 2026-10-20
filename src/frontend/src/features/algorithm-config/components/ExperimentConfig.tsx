@@ -66,7 +66,7 @@ export function ExperimentConfig({
 
             <FormField
                 label="Runs per configuration"
-                hint="The assignment requires 3 runs per configuration."
+                hint=""
                 issue={findIssue(issues, "runRepetition")}
             >
                 <input

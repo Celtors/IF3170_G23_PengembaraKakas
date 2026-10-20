@@ -153,7 +153,6 @@ export function PackageCard({
                         <span className="package-card__fragile-text">
                             <span className="package-card__fragile-title">Fragile</span>
                             <span className="package-card__fragile-detail">
-                                Nothing may be stacked on top of it.
                             </span>
                         </span>
                     </label>
