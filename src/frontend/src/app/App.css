@@ -97,3 +97,7 @@ html, body {
   justify-content: center;
   padding: 0;
 }
+.experiment-table { border-collapse: collapse; margin-top: 8px; }
+.experiment-table th, .experiment-table td { padding: 2px 8px; text-align: left; }
+.experiment-table tbody tr { cursor: pointer; }
+.experiment-table tbody tr:hover, .experiment-table tr.selected { background: rgba(128, 128, 128, 0.2); }

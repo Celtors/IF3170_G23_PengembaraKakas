@@ -1,4 +1,4 @@
-import type { AlgorithmParamType, AlgorithmType } from "../features/algorithm-config/types";
+import type { AlgorithmParamType, AlgorithmType, ExperimentConfigState } from "../features/algorithm-config/types";
 import type { Dimensions, PackageSpec } from "../types/package";
 import type { TruckSpec } from "../types/truck";
 
@@ -55,14 +55,20 @@ export interface RunResponse {
 
 const dims = (d: Dimensions) => ({ width: d.w, length: d.l, height: d.h });
 
-export async function runAlgorithm(
+export interface ExperimentResponse {
+    name: string;
+    algorithm: string;
+    variations: { params: Record<string, number>; runs: RunResponse[] }[];
+}
+
+function buildBody(
     algorithm: AlgorithmType,
     p: AlgorithmParamType,
     truck: TruckSpec,
     packages: PackageSpec[],
     seed?: number,
-): Promise<RunResponse> {
-    const body = {
+) {
+    return {
         algorithm: ALGORITHM_NAME[algorithm],
         seed: seed ?? null,
         params: {
@@ -88,12 +94,44 @@ export async function runAlgorithm(
             })),
         },
     };
+}
 
-    const res = await fetch("/api/run", {
+async function post<T>(url: string, body: unknown): Promise<T> {
+    const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(`Backend error ${res.status}: ${await res.text()}`);
     return res.json();
+}
+
+export function runAlgorithm(
+    algorithm: AlgorithmType,
+    p: AlgorithmParamType,
+    truck: TruckSpec,
+    packages: PackageSpec[],
+    seed?: number,
+): Promise<RunResponse> {
+    return post("/api/run", buildBody(algorithm, p, truck, packages, seed));
+}
+
+export function runExperiment(
+    algorithm: AlgorithmType,
+    p: AlgorithmParamType,
+    exp: ExperimentConfigState,
+    truck: TruckSpec,
+    packages: PackageSpec[],
+    seed?: number,
+): Promise<ExperimentResponse> {
+    return post("/api/experiment", {
+        ...buildBody(algorithm, p, truck, packages, seed),
+        experiment: {
+            name: exp.experimentName,
+            repetitions: exp.runRepetition,
+            ga_mode: exp.GAMode === "POPULATION_CTRL" ? "iteration" : "population",
+            population_variation: exp.populationVariation,
+            iteration_variation: exp.iterationVariation,
+        },
+    });
 }

@@ -7,9 +7,22 @@ import { ExperimentConfig } from "../features/algorithm-config/components/Experi
 import { useTruckConfig } from "../features/truck-config/hooks/useTruckConfig";
 import { TruckForm } from "../features/truck-config/components/TruckForm";
 import { PackageListEditor } from "../features/truck-config/components/PackageListEditor";
-import { runAlgorithm, type RunResponse } from "../api/run";
+import { runAlgorithm, runExperiment, type ExperimentResponse, type RunResponse } from "../api/run";
 import { FormField } from "../features/algorithm-config/components/FormField";
 import { StateView } from "../features/visualization/StateView";
+
+const METRIC_LABEL: Record<string, string> = {
+    restarts: "Restart",
+    iterations_per_restart: "Iterasi/restart",
+    sideways_moves: "Sideways move",
+    stuck_frequency: "Stuck",
+};
+
+const formatMetrics = (m: Record<string, unknown>) =>
+    Object.entries(METRIC_LABEL)
+        .filter(([k]) => k in m)
+        .map(([k, label]) => `${label}: ${Array.isArray(m[k]) ? (m[k] as number[]).join(", ") : m[k]}`)
+        .join(" · ") || "-";
 
 const AppLayout: React.FC = () => {
     const [collapseLeft, setCollapseLeft] = useState<boolean>(false);
@@ -19,16 +32,25 @@ const AppLayout: React.FC = () => {
     const [running, setRunning] = useState(false);
     const [result, setResult] = useState<RunResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [expResult, setExpResult] = useState<ExperimentResponse | null>(null);
 
     const [seedText, setSeedText] = useState("");
     const seed = seedText.trim() === "" ? undefined : Number(seedText);
     const seedValid = seed === undefined || (Number.isSafeInteger(seed) && seed >= 0);
 
-    const handleRun = async () => {
+    const handleRun = async (experiment: boolean) => {
         setRunning(true);
         setError(null);
         try {
-            setResult(await runAlgorithm(cfg.selectedAlgorithm, cfg.params, truckCfg.truck, truckCfg.packageSpecs, seed));
+            if (experiment) {
+                const exp = await runExperiment(cfg.selectedAlgorithm, cfg.params, cfg.experimentConfig,
+                    truckCfg.truck, truckCfg.packageSpecs, seed);
+                setExpResult(exp);
+                setResult(exp.variations[0]?.runs[0] ?? null);
+            } else {
+                setExpResult(null);
+                setResult(await runAlgorithm(cfg.selectedAlgorithm, cfg.params, truckCfg.truck, truckCfg.packageSpecs, seed));
+            }
         } catch (e) {
             setError(e instanceof Error ? e.message : String(e));
         } finally {
@@ -112,9 +134,16 @@ const AppLayout: React.FC = () => {
                         <button
                             type="button"
                             disabled={running || !seedValid || !cfg.isValid || !truckCfg.isValid}
-                            onClick={handleRun}
+                            onClick={() => handleRun(false)}
                         >
                             {running ? "Running..." : "Run"}
+                        </button>
+                        <button
+                            type="button"
+                            disabled={running || !seedValid || !cfg.isValid || !truckCfg.isValid}
+                            onClick={() => handleRun(true)}
+                        >
+                            {running ? "Running..." : "Run experiment"}
                         </button>
                     </div>
                 )}
@@ -154,6 +183,36 @@ const AppLayout: React.FC = () => {
                                 </ul>
                             );
                         })()}
+                        {!error && expResult && (
+                            <table className="experiment-table">
+                                <caption>
+                                    Eksperimen {expResult.name || "(tanpa nama)"}: klik baris untuk melihat state-nya
+                                </caption>
+                                <thead>
+                                    <tr>
+                                        <th>Variasi</th><th>Run</th><th>Objective awal → akhir</th>
+                                        <th>Best</th><th>Iterasi</th><th>Metrik</th><th>Durasi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {expResult.variations.flatMap((v) => v.runs.map((r, i) => (
+                                        <tr
+                                            key={r.run.run_id}
+                                            className={r === result ? "selected" : undefined}
+                                            onClick={() => setResult(r)}
+                                        >
+                                            <td>{Object.entries(v.params).map(([k, val]) => `${k}=${val}`).join(", ") || "-"}</td>
+                                            <td>#{i + 1}</td>
+                                            <td>{r.experiment.initial_objective} → {r.experiment.final_objective}</td>
+                                            <td>{r.experiment.best_objective}</td>
+                                            <td>{r.experiment.iterations}</td>
+                                            <td>{formatMetrics(r.experiment.algorithm_metrics)}</td>
+                                            <td>{r.run.duration_ms} ms</td>
+                                        </tr>
+                                    )))}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
                 )}
             </section>

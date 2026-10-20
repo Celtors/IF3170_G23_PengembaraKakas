@@ -7,9 +7,9 @@ def run_experiment(req: ExperimentRequest) -> ExperimentResponse:
     if req.algorithm != "genetic":
         variations = [{}]
     elif cfg.ga_mode == "population":
-        variations = [{"population_size": v} for v in cfg.population_variation]
+        variations = [{"population_size": v, "iterations": req.params.iterations} for v in cfg.population_variation]
     else:
-        variations = [{"iterations": v} for v in cfg.iteration_variation]
+        variations = [{"population_size": req.params.population_size, "iterations": v} for v in cfg.iteration_variation]
 
     return ExperimentResponse(
         name=cfg.name,
