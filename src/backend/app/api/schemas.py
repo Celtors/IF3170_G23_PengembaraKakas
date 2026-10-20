@@ -79,7 +79,7 @@ class PlacementOut(BaseModel):
     package_id: str
     position: tuple[int, int, int]
     orientation: tuple[Axis, Axis, Axis]
-    inside_truck: bool
+    placement: Literal["inside", "outside", "stuck"]
 
 class StateOut(BaseModel):
     state: Literal["init", "final"]

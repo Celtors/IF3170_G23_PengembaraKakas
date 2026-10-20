@@ -61,7 +61,7 @@ def state_out(name: str, state: State, obj_fn) -> StateOut:
                 package_id=rep.package_id,
                 position=rep.position.get_xyz(),
                 orientation=tuple(AXES[i] for i in rep.orientation.value),
-                inside_truck=placement_in_truck(package_box(pkg, rep), state.truck) == Placement.INSIDE,
+                placement=placement_in_truck(package_box(pkg, rep), state.truck).value
             )
             for pkg, rep in zip(state.packages, state.shape_pack_models)
         ],
