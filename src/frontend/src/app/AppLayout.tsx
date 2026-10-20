@@ -10,6 +10,7 @@ import { PackageListEditor } from "../features/truck-config/components/PackageLi
 import { runAlgorithm, runExperiment, type ExperimentResponse, type RunResponse } from "../api/run";
 import { FormField } from "../features/algorithm-config/components/FormField";
 import { StateView } from "../features/visualization/StateView";
+import { LineChart } from "../features/visualization/LineChart";
 
 const METRIC_LABEL: Record<string, string> = {
     restarts: "Restart",
@@ -23,6 +24,32 @@ const formatMetrics = (m: Record<string, unknown>) =>
         .filter(([k]) => k in m)
         .map(([k, label]) => `${label}: ${Array.isArray(m[k]) ? (m[k] as number[]).join(", ") : m[k]}`)
         .join(" · ") || "-";
+
+function RunCharts({ result }: { result: RunResponse }) {
+    const { objective_history, algorithm_metrics: m } = result.experiment;
+    const avg = m.avg_history as number[] | undefined;
+    const prob = m.prob_history as number[] | undefined;
+    return (
+        <div className="run-charts">
+            <LineChart
+                title={avg ? "Fitness per generasi" : "Objective per iterasi"}
+                xLabel={avg ? "Generasi" : "Iterasi"}
+                series={avg
+                    ? [
+                        { name: "Maksimum", values: objective_history, color: "var(--series-1)" },
+                        { name: "Rata-rata populasi", values: avg, color: "var(--series-2)" },
+                    ]
+                    : [{ name: "Objective", values: objective_history, color: "var(--series-1)" }]}
+            />
+            {prob && (
+                <LineChart
+                    title="Probabilitas e^(ΔE/T) per iterasi"
+                    series={[{ name: "e^(ΔE/T)", values: prob, color: "var(--series-1)" }]}
+                />
+            )}
+        </div>
+    );
+}
 
 const AppLayout: React.FC = () => {
     const [collapseLeft, setCollapseLeft] = useState<boolean>(false);
@@ -175,12 +202,15 @@ const AppLayout: React.FC = () => {
                             const final = result.states.find((s) => s.state === "final");
                             const inside = final?.placements.filter((p) => p.placement === "inside").length ?? 0;
                             return (
-                                <ul>
-                                    <li>Algoritma: {result.run.algorithm} ({result.run.duration_ms} ms)</li>
-                                    <li>Objective: {result.experiment.initial_objective} → {result.experiment.final_objective} (best {result.experiment.best_objective})</li>
-                                    <li>Iterasi: {result.experiment.iterations}</li>
-                                    <li>Paket di dalam truk: {inside} / {final?.placements.length ?? 0}</li>
-                                </ul>
+                                <>
+                                    <ul>
+                                        <li>Algoritma: {result.run.algorithm} ({result.run.duration_ms} ms)</li>
+                                        <li>Objective: {result.experiment.initial_objective} → {result.experiment.final_objective} (best {result.experiment.best_objective})</li>
+                                        <li>Iterasi: {result.experiment.iterations}</li>
+                                        <li>Paket di dalam truk: {inside} / {final?.placements.length ?? 0}</li>
+                                    </ul>
+                                    <RunCharts result={result} />
+                                </>
                             );
                         })()}
                         {!error && expResult && (
