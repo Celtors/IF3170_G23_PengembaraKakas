@@ -13,6 +13,10 @@ import { useStateNavigation } from "../features/state-inspector/hooks/useStateNa
 import { StateInspector } from "../features/state-inspector/components/StateInspector";
 import { MOCK_RUN } from "../data/visualizationData";
 import { ExperimentPanel } from "../features/experiments/components/ExperimentPanel";
+import { Sidebar } from "../components/layout/Sidebar";
+import { MainContent } from "../components/layout/MainContent";
+import { BottomPanel } from "../components/layout/BottomPanel";
+import { Button } from "../components/ui/Button";
 
 const AppLayout: React.FC = () => {
     const [collapseLeft, setCollapseLeft] = useState<boolean>(false);
@@ -62,61 +66,44 @@ const AppLayout: React.FC = () => {
         <div className={containerClass}
             style={containerStyle}
         >
-            <aside className="left">
-                <div className="panel-header">
-                    {!collapseLeft && <span className="panel-title">Configuration</span>}
-                    <button
-                        type="button"
-                        className="panel-toggle"
-                        aria-expanded={!collapseLeft}
-                        aria-label={collapseLeft ? "Expand left panel" : "Collapse left panel"}
-                        onClick={() => setCollapseLeft((prev) => !prev)}
-                    >
-                        {collapseLeft ? "»" : "«"}
-                    </button>
-                </div>
+            <Sidebar collapsed={collapseLeft} onToggle={() => setCollapseLeft((prev) => !prev)}>
+                <AlgorithmSelector
+                    selectedAlgorithm={cfg.selectedAlgorithm}
+                    onSelectAlgorithm={cfg.setSelectedAlgorithm}
+                />
+                <AlgorithmParameters
+                    meta={cfg.currentMeta}
+                    params={cfg.params}
+                    issues={cfg.validationIssues}
+                    onUpdateParam={cfg.updateParam}
+                    onApplyPreset={cfg.applyPreset}
+                    onReset={cfg.resetToDefaults}
+                />
+                <ExperimentConfig
+                    selectedAlgorithm={cfg.selectedAlgorithm}
+                    params={cfg.params}
+                    experimentConfig={cfg.experimentConfig}
+                    issues={cfg.validationIssues}
+                    onUpdate={cfg.updateExperimentConfig}
+                />
+                <TruckForm
+                    truck={truckCfg.truck}
+                    issues={truckCfg.validationIssues}
+                    onUpdateDimension={truckCfg.updateTruckDimension}
+                    onUpdateMaxCapacity={truckCfg.updateMaxCapacity}
+                />
+                <PackageListEditor
+                    packages={truckCfg.packages}
+                    issues={truckCfg.validationIssues}
+                    onAdd={truckCfg.addPackage}
+                    onRemove={truckCfg.removePackage}
+                    onUpdate={truckCfg.updatePackage}
+                    onUpdateDimension={truckCfg.updatePackageDimension}
+                />
+                <Button variant="primary" disabled={!cfg.isValid || !truckCfg.isValid}>Run</Button>
+            </Sidebar>
 
-                {!collapseLeft && (
-                    <div className="panel-body">
-                        <AlgorithmSelector
-                            selectedAlgorithm={cfg.selectedAlgorithm}
-                            onSelectAlgorithm={cfg.setSelectedAlgorithm}
-                        />
-                        <AlgorithmParameters
-                            meta={cfg.currentMeta}
-                            params={cfg.params}
-                            issues={cfg.validationIssues}
-                            onUpdateParam={cfg.updateParam}
-                            onApplyPreset={cfg.applyPreset}
-                            onReset={cfg.resetToDefaults}
-                        />
-                        <ExperimentConfig
-                            selectedAlgorithm={cfg.selectedAlgorithm}
-                            params={cfg.params}
-                            experimentConfig={cfg.experimentConfig}
-                            issues={cfg.validationIssues}
-                            onUpdate={cfg.updateExperimentConfig}
-                        />
-                        <TruckForm
-                            truck={truckCfg.truck}
-                            issues={truckCfg.validationIssues}
-                            onUpdateDimension={truckCfg.updateTruckDimension}
-                            onUpdateMaxCapacity={truckCfg.updateMaxCapacity}
-                        />
-                        <PackageListEditor
-                            packages={truckCfg.packages}
-                            issues={truckCfg.validationIssues}
-                            onAdd={truckCfg.addPackage}
-                            onRemove={truckCfg.removePackage}
-                            onUpdate={truckCfg.updatePackage}
-                            onUpdateDimension={truckCfg.updatePackageDimension}
-                        />
-                        <button type="button" disabled={!cfg.isValid || !truckCfg.isValid}>Run</button>
-                    </div>
-                )}
-            </aside>
-
-            <main className="top-right">
+            <MainContent>
                 <VisualizationCanvas
                     truck={MOCK_RUN.truck}
                     packages={MOCK_RUN.packages}
@@ -124,41 +111,31 @@ const AppLayout: React.FC = () => {
                     selectedPackageId={selectedPackageId}
                     onSelectPackage={selectPackage}
                 />
-            </main>
+            </MainContent>
 
-            <div className="resize-rail" onMouseDown={handleMouseDown}>
-                    <button
-                        type="button"
-                        className="panel-toggle"
-                        aria-expanded={!collapseBottom}
-                        aria-label={collapseBottom ? "Expand bottom panel" : "Collapse bottom panel"}
-                        onClick={() => setCollapseBottom((prev) => !prev)}
-                    >
-                        {collapseBottom ? "▲" : "▼"}
-                    </button>
-            </div>
-            <section className="bottom">
-                <div className="panel-header results-panel-header">
-                    <div className="results-panel-tabs" role="tablist" aria-label="Results views">
-                        <button type="button" role="tab" aria-selected={resultsTab === "state"} className={resultsTab === "state" ? "results-tab active" : "results-tab"} onClick={() => setResultsTab("state")}>Current state</button>
-                        <button type="button" role="tab" aria-selected={resultsTab === "experiments"} className={resultsTab === "experiments" ? "results-tab active" : "results-tab"} onClick={() => setResultsTab("experiments")}>Experiments</button>
+            <BottomPanel
+                collapsed={collapseBottom}
+                onToggle={() => setCollapseBottom((prev) => !prev)}
+                onResizeStart={handleMouseDown}
+                header={
+                    <div className="panel-header results-panel-header">
+                        <div className="results-panel-tabs" role="tablist" aria-label="Results views">
+                            <button type="button" role="tab" aria-selected={resultsTab === "state"} className={resultsTab === "state" ? "results-tab active" : "results-tab"} onClick={() => setResultsTab("state")}>Current state</button>
+                            <button type="button" role="tab" aria-selected={resultsTab === "experiments"} className={resultsTab === "experiments" ? "results-tab active" : "results-tab"} onClick={() => setResultsTab("experiments")}>Experiments</button>
+                        </div>
                     </div>
-                </div>
-
-                {!collapseBottom && (
-                    <div className="panel-body">
-                        {resultsTab === "state" ? (
-                            <StateInspector
-                                navigation={navigation}
-                                summary={MOCK_RUN.summary}
-                                packages={MOCK_RUN.packages}
-                                selectedPackageId={selectedPackageId}
-                                onClearSelection={() => selectPackage(null)}
-                            />
-                        ) : <ExperimentPanel />}
-                    </div>
-                )}
-            </section>
+                }
+            >
+                {resultsTab === "state" ? (
+                    <StateInspector
+                        navigation={navigation}
+                        summary={MOCK_RUN.summary}
+                        packages={MOCK_RUN.packages}
+                        selectedPackageId={selectedPackageId}
+                        onClearSelection={() => selectPackage(null)}
+                    />
+                ) : <ExperimentPanel />}
+            </BottomPanel>
         </div>
     );
 };
