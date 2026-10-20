@@ -14,9 +14,10 @@ from app.algorithms.hill_climbing_stochastic import HillClimbingStochastic
 from app.algorithms.simulated_annealing import SimulatedAnnealing
 from app.models.dimensions import Dimensions
 from app.models.package import Package
+from app.models.pack_representation import PackRepresentation
 from app.models.state import State
 from app.models.truck import Truck
-from app.utils.geometry import Placement, package_box, placement_in_truck
+from app.utils.geometry import package_box, placement_in_truck
 from app.utils.neighbors import random_state
 from app.utils.objective import score, score_plus_plus
 
@@ -56,15 +57,19 @@ def state_out(name: str, state: State, obj_fn) -> StateOut:
     return StateOut(
         state=name,
         objective_value=obj_fn(state),
-        placements=[
-            PlacementOut(
-                package_id=rep.package_id,
-                position=rep.position.get_xyz(),
-                orientation=tuple(AXES[i] for i in rep.orientation.value),
-                inside_truck=placement_in_truck(package_box(pkg, rep), state.truck) == Placement.INSIDE,
-            )
-            for pkg, rep in zip(state.packages, state.shape_pack_models)
-        ],
+        placements=[placement_out(pkg, rep, state.truck) for pkg, rep in zip(state.packages, state.shape_pack_models)],
+    )
+
+
+def placement_out(pkg: Package, rep: PackRepresentation, truck: Truck) -> PlacementOut:
+    order = rep.orientation.value
+    box = package_box(pkg, rep)
+    return PlacementOut(
+        package_id=rep.package_id,
+        position=rep.position.get_xyz(),
+        orientation={side: AXES[order.index(d)] for d, side in enumerate("wlh")},
+        size=tuple(hi - lo for lo, hi in zip(box.lo, box.hi)),
+        placement=placement_in_truck(box, truck).value,
     )
 
 

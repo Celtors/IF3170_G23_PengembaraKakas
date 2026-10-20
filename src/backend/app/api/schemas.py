@@ -75,11 +75,17 @@ class RunInfo(BaseModel):
     started_at: datetime
     duration_ms: int
 
+class OrientationOut(BaseModel):
+    w: Axis
+    l: Axis
+    h: Axis
+
 class PlacementOut(BaseModel):
     package_id: str
     position: tuple[int, int, int]
-    orientation: tuple[Axis, Axis, Axis]
-    inside_truck: bool
+    orientation: OrientationOut
+    size: tuple[int, int, int]
+    placement: Literal["inside", "outside", "stuck"]
 
 class StateOut(BaseModel):
     state: Literal["init", "final"]
