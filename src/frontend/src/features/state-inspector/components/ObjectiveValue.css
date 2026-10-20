@@ -1,0 +1,70 @@
+.objective-value {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.objective-value__main {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.objective-value__current {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #f1f5f9;
+    font-variant-numeric: tabular-nums;
+}
+
+.objective-value__delta {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #94a3b8;
+    font-variant-numeric: tabular-nums;
+}
+
+.objective-value__delta--up {
+    color: #4ade80;
+}
+
+.objective-value__delta--down {
+    color: #f87171;
+}
+
+.objective-value__badge {
+    padding: 0 0.375rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: #4ade80;
+    background: rgba(20, 83, 45, 0.4);
+    border: 1px solid rgba(21, 128, 61, 0.6);
+    border-radius: 0.25rem;
+}
+
+.objective-value__summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0;
+}
+
+.objective-value__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: 0.75rem;
+}
+
+.objective-value__row dt {
+    color: #94a3b8;
+}
+
+.objective-value__row dd {
+    margin: 0;
+    font-weight: 600;
+    color: #f1f5f9;
+    font-variant-numeric: tabular-nums;
+}
