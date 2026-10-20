@@ -14,7 +14,15 @@ export async function runOptimization(payload: any): Promise<RunResponse> {
 
         if (!response.ok) {
             const errData = await response.json();
-            throw new Error(errData.detail || "Terjadi kesalahan saat memanggil API");
+            let errorMessage = "Terjadi kesalahan saat memanggil API";
+            
+            if (Array.isArray(errData.detail)) {
+                errorMessage = errData.detail.map((e: any) => `${e.loc?.join(' -> ')}: ${e.msg}`).join('\n');
+            } else if (errData.detail) {
+                errorMessage = errData.detail;
+            }
+            
+            throw new Error(errorMessage);
         }
 
         const data: RunResponse = await response.json();
