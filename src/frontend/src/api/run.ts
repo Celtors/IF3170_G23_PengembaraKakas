@@ -59,12 +59,6 @@ export interface RunResponse {
         algorithm_metrics: Record<string, unknown>;
     };
 }
-export interface ExperimentResponse {
-    schema_version: "1.0";
-    name: string;
-    algorithm: string;
-    variations: { params: Record<string, number>; runs: RunResponse[] }[];
-}
 
 const dims = (d: Dimensions): DimensionsIO => ({ width: d.w, length: d.l, height: d.h });
 
@@ -192,4 +186,25 @@ export function toRunSummary(response: RunResponse) {
         bestObjective: response.experiment.best_objective,
         finalObjective: response.experiment.final_objective,
     };
+}
+
+export function toObjectiveChartStates(
+    response: RunResponse,
+): { iteration: number; objectiveValue: number }[] {
+    return response.experiment.objective_history.map(
+        (objectiveValue, iteration) => ({ iteration, objectiveValue }),
+    );
+}
+
+
+export interface ExperimentVariation {
+    params: Record<string, number>;
+    runs: RunResponse[];
+}
+
+export interface ExperimentResponse {
+    schema_version: "1.0";
+    name: string;
+    algorithm: string;
+    variations: ExperimentVariation[];
 }

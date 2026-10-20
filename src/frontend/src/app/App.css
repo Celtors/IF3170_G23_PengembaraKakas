@@ -174,9 +174,17 @@ html, body {
 .run-actions > button { flex: 1 1 130px; }
 .api-error { color: #b91c1c; font-size: 0.85rem; overflow-wrap: anywhere; }
 .run-meta { font-size: 0.8rem; opacity: 0.8; }
-.run-results-extra { padding: 10px 8px 16px; }
+.run-results-extra { margin: 10px 8px 16px; }
 .run-results-extra p {
   font-size: 12px;
 }
 .experiment-results { overflow: auto; padding: 4px 8px 16px; }
 .experiment-results section { margin: 14px 0; overflow-x: auto; }
+
+.results-empty { padding: 14px; }
+.experiment-variation { padding: 10px 0 16px; border-bottom: 1px solid var(--border, #d1d5db); }
+.experiment-variation h4 { margin: 8px 0; color: var(--text-h, #111827); }
+.experiment-variation > p { font-size: 0.85rem; }
+.experiment-raw-response { margin: 14px 0; border: 1px solid var(--border, #d1d5db); border-radius: 8px; }
+.experiment-raw-response > summary { padding: 10px 12px; cursor: pointer; font-weight: 650; }
+.experiment-raw-response .response-json { max-height: 520px; margin: 0 10px 10px; }

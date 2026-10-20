@@ -5,7 +5,11 @@ import { clampIndex } from "../utils/clampIndex";
 
 export function useStateNavigation(states: SolutionState[]): StateNavigation {
     const [requestedIndex, setRequestedIndex] = useState(0);
-    const stateCount = states.length;
+    const visibleStates = states.length <= 1
+        ? states
+        : [states[0], states[states.length - 1]];
+
+    const stateCount = visibleStates.length;
     const stateIndex = clampIndex(requestedIndex, stateCount);
 
     const goToIndex = useCallback(
@@ -26,8 +30,10 @@ export function useStateNavigation(states: SolutionState[]): StateNavigation {
     return {
         stateIndex,
         stateCount,
-        currentState: states[stateIndex] ?? null,
-        previousState: stateIndex > 0 ? (states[stateIndex - 1] ?? null) : null,
+        currentState: visibleStates[stateIndex] ?? null,
+        previousState: stateIndex > 0
+            ? visibleStates[stateIndex - 1] ?? null
+            : null,
         hasPrevious: stateIndex > 0,
         hasNext: stateIndex < stateCount - 1,
         goToPrevious,

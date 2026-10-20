@@ -16,19 +16,7 @@ import { Sidebar } from "../components/layout/Sidebar";
 import { MainContent } from "../components/layout/MainContent";
 import { BottomPanel } from "../components/layout/BottomPanel";
 import { Button } from "../components/ui/Button";
-import { LineChart } from "../features/visualization/LineChart";
-
-const METRIC_LABEL: Record<string, string> = {
-    restarts: "Restart",
-    iterations_per_restart: "Iterasi/restart",
-    sideways_moves: "Sideways move",
-    stuck_frequency: "Stuck",
-};
-
-const formatMetrics = (metrics: Record<string, unknown>) => Object.entries(METRIC_LABEL)
-    .filter(([key]) => key in metrics)
-    .map(([key, label]) => `${label}: ${Array.isArray(metrics[key]) ? (metrics[key] as unknown[]).join(", ") : String(metrics[key])}`)
-    .join(" · ") || "Tidak ada metrik tambahan dari backend.";
+import { RunResponseDetails } from "../features/experiments/components/RunResponseDetails";
 
 const AppLayout: React.FC = () => {
     const [collapseLeft, setCollapseLeft] = useState(false);
@@ -137,7 +125,8 @@ const AppLayout: React.FC = () => {
 
             <BottomPanel collapsed={collapseBottom} onToggle={() => setCollapseBottom((previous) => !previous)}
                 onResizeStart={() => { isDragging.current = true; }}
-                header={<div className="panel-header results-panel-header">
+                header={
+                <div className="panel-header results-panel-header">
                     <div className="results-panel-tabs" role="tablist" aria-label="Results views">
                         <button type="button" role="tab" aria-selected={resultsTab === "state"}
                             className={resultsTab === "state" ? "results-tab active" : "results-tab"}
@@ -146,33 +135,86 @@ const AppLayout: React.FC = () => {
                             className={resultsTab === "experiments" ? "results-tab active" : "results-tab"}
                             onClick={() => setResultsTab("experiments")}>Experiments</button>
                     </div>
-                    {result && <span className="run-meta">{result.run.algorithm} · {result.run.duration_ms} ms</span>}
+                    {resultsTab === "experiments" && expResult ? (
+                        <span className="run-meta">
+                            {expResult.algorithm} · {expResult.variations.length} variasi · {expResult.variations.reduce((total, variation) => total + variation.runs.length, 0)} run
+                        </span>
+                    ) : result ? (
+                        <span className="run-meta">{result.run.algorithm} · {result.run.duration_ms} ms</span>
+                    ) : null}
                 </div>}>
                 {resultsTab === "state" ? (
-                    <>
-                        <StateInspector navigation={navigation} summary={summary} packages={truckCfg.packageSpecs}
-                            selectedPackageId={selectedPackageId} onClearSelection={() => selectPackage(null)} />
-                        {result && <div className="run-results-extra">
-                            <p><strong>Run ID:</strong> {result.run.run_id}</p>
-                            <p><strong>Metrik:</strong> {formatMetrics(result.experiment.algorithm_metrics)}</p>
-                            <LineChart title="Objective per iterasi" xLabel="Iterasi"
-                                series={[{ name: "Objective", values: result.experiment.objective_history, color: "var(--series-1)" }]} />
-                        </div>}
-                    </>
+                    result ? (
+                        <>
+                            <StateInspector navigation={navigation} summary={summary} packages={truckCfg.packageSpecs}
+                                selectedPackageId={selectedPackageId} onClearSelection={() => selectPackage(null)} />
+                            <div className="run-results-extra">
+                                <RunResponseDetails response={result} title="Complete normal run response" />
+                            </div>
+                        </>
+                    ) : (
+                        <p className="results-empty">Belum ada hasil run. Jalankan Run optimization untuk mengambil hasil dari backend.</p>
+                    )
                 ) : (
                     <div className="experiment-results">
-                        {!expResult ? <p>Belum ada hasil eksperimen. Jalankan Run experiment untuk mengambil hasil dari backend.</p> : <>
-                            <h3>{expResult.name || "Experiment"}</h3>
-                            <p>Algoritma: {expResult.algorithm}</p>
-                            {expResult.variations.map((variation, index) => <section key={`${index}-${JSON.stringify(variation.params)}`}>
-                                <h4>Variasi {index + 1}: {Object.entries(variation.params).map(([key, value]) => `${key}=${value}`).join(", ") || "default"}</h4>
-                                <table className="experiment-table"><thead><tr><th>Run</th><th>Durasi (ms)</th><th>Awal</th><th>Akhir</th><th>Terbaik</th></tr></thead>
-                                    <tbody>{variation.runs.map((run) => <tr key={run.run.run_id}>
-                                        <td>{run.run.run_id.slice(0, 8)}</td><td>{run.run.duration_ms}</td>
-                                        <td>{run.experiment.initial_objective}</td><td>{run.experiment.final_objective}</td><td>{run.experiment.best_objective}</td>
-                                    </tr>)}</tbody></table>
-                            </section>)}
-                        </>}
+                        {!expResult ? (
+                            <p>Belum ada hasil eksperimen. Jalankan Run experiment untuk mengambil hasil dari backend.</p>
+                        ) : (
+                            <>
+                                <h3>{expResult.name || "Experiment"}</h3>
+                                <dl className="response-field-grid">
+                                    <div><dt>Schema version</dt><dd>{expResult.schema_version}</dd></div>
+                                    <div><dt>Algorithm</dt><dd>{expResult.algorithm}</dd></div>
+                                    <div><dt>Variations</dt><dd>{expResult.variations.length}</dd></div>
+                                    <div><dt>Total runs</dt><dd>{expResult.variations.reduce((total, variation) => total + variation.runs.length, 0)}</dd></div>
+                                </dl>
+                                {expResult.variations.length === 0 ? (
+                                    <p>Backend mengembalikan eksperimen tanpa variasi.</p>
+                                ) : expResult.variations.map((variation, variationIndex) => (
+                                    <section className="experiment-variation" key={`${variationIndex}-${JSON.stringify(variation.params)}`}>
+                                        <h4>
+                                            Variasi {variationIndex + 1}: {Object.entries(variation.params)
+                                                .map(([key, value]) => `${key}=${value}`).join(", ") || "default (non-genetic)"}
+                                        </h4>
+                                        <p>Jumlah run: {variation.runs.length}</p>
+                                        {variation.runs.length === 0 ? (
+                                            <p>Variasi ini tidak memiliki run dari backend.</p>
+                                        ) : (
+                                            <>
+                                                <div className="response-table-wrap">
+                                                    <table className="experiment-table">
+                                                        <thead><tr><th>Run ID</th><th>Status</th><th>Durasi (ms)</th><th>Iterasi</th><th>Awal</th><th>Akhir</th><th>Terbaik</th></tr></thead>
+                                                        <tbody>{variation.runs.map((run, runIndex) => (
+                                                            <tr key={`${run.run.run_id}-${runIndex}`}>
+                                                                <td>{run.run.run_id}</td>
+                                                                <td>{run.run.status}</td>
+                                                                <td>{run.run.duration_ms}</td>
+                                                                <td>{run.experiment.iterations}</td>
+                                                                <td>{run.experiment.initial_objective}</td>
+                                                                <td>{run.experiment.final_objective}</td>
+                                                                <td>{run.experiment.best_objective}</td>
+                                                            </tr>
+                                                        ))}</tbody>
+                                                    </table>
+                                                </div>
+                                                {variation.runs.map((run, runIndex) => (
+                                                    <RunResponseDetails
+                                                        key={`${run.run.run_id}-details`}
+                                                        response={run}
+                                                        title={`Variation ${variationIndex + 1} · Run ${runIndex + 1}`}
+                                                        initiallyOpen={false}
+                                                    />
+                                                ))}
+                                            </>
+                                        )}
+                                    </section>
+                                ))}
+                                {/* <details className="response-raw experiment-raw-response">
+                                    <summary>View complete raw ExperimentResponse JSON</summary>
+                                    <pre className="response-json">{JSON.stringify(expResult, null, 2)}</pre>
+                                </details> */}
+                            </>
+                        )}
                     </div>
                 )}
             </BottomPanel>
