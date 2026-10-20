@@ -12,10 +12,12 @@ import { usePackageSelection } from "../features/visualization/hooks/usePackageS
 import { useStateNavigation } from "../features/state-inspector/hooks/useStateNavigation";
 import { StateInspector } from "../features/state-inspector/components/StateInspector";
 import { MOCK_RUN } from "../data/visualizationData";
+import { ExperimentPanel } from "../features/experiments/components/ExperimentPanel";
 
 const AppLayout: React.FC = () => {
     const [collapseLeft, setCollapseLeft] = useState<boolean>(false);
     const [collapseBottom, setCollapseBottom] = useState<boolean>(false);
+    const [resultsTab, setResultsTab] = useState<"state" | "experiments">("state");
     const cfg = useAlgorithmConfig();
     const truckCfg = useTruckConfig();
     const { selectedPackageId, selectPackage } = usePackageSelection();
@@ -50,9 +52,15 @@ const AppLayout: React.FC = () => {
         .filter(Boolean)
         .join(" ");
 
+    const containerStyle = {
+        "--bottom-height": collapseBottom
+            ? "0px"
+            : `${bottomHeight}vh`,
+    } as React.CSSProperties;
+
     return (
         <div className={containerClass}
-            style={{ "--bottom-height": `${bottomHeight}vh` } as React.CSSProperties}
+            style={containerStyle}
         >
             <aside className="left">
                 <div className="panel-header">
@@ -118,10 +126,7 @@ const AppLayout: React.FC = () => {
                 />
             </main>
 
-            <div className="resize-rail" onMouseDown={handleMouseDown}></div>
-            <section className="bottom">
-                <div className="panel-header">
-                    <span className="panel-title">Results</span>
+            <div className="resize-rail" onMouseDown={handleMouseDown}>
                     <button
                         type="button"
                         className="panel-toggle"
@@ -131,17 +136,26 @@ const AppLayout: React.FC = () => {
                     >
                         {collapseBottom ? "▲" : "▼"}
                     </button>
+            </div>
+            <section className="bottom">
+                <div className="panel-header results-panel-header">
+                    <div className="results-panel-tabs" role="tablist" aria-label="Results views">
+                        <button type="button" role="tab" aria-selected={resultsTab === "state"} className={resultsTab === "state" ? "results-tab active" : "results-tab"} onClick={() => setResultsTab("state")}>Current state</button>
+                        <button type="button" role="tab" aria-selected={resultsTab === "experiments"} className={resultsTab === "experiments" ? "results-tab active" : "results-tab"} onClick={() => setResultsTab("experiments")}>Experiments</button>
+                    </div>
                 </div>
 
                 {!collapseBottom && (
                     <div className="panel-body">
-                        <StateInspector
-                            navigation={navigation}
-                            summary={MOCK_RUN.summary}
-                            packages={MOCK_RUN.packages}
-                            selectedPackageId={selectedPackageId}
-                            onClearSelection={() => selectPackage(null)}
-                        />
+                        {resultsTab === "state" ? (
+                            <StateInspector
+                                navigation={navigation}
+                                summary={MOCK_RUN.summary}
+                                packages={MOCK_RUN.packages}
+                                selectedPackageId={selectedPackageId}
+                                onClearSelection={() => selectPackage(null)}
+                            />
+                        ) : <ExperimentPanel />}
                     </div>
                 )}
             </section>
